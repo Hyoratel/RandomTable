@@ -1,0 +1,51 @@
+/* 전체 페이지 스타일 */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+}
+
+/* 테이블 컨테이너 */
+.table-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* 개별 테이블 스타일 */
+.table {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  width: 200px;
+  text-align: center !important;
+}
+
+/* 테이블 제목 */
+.table h2 {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  margin: -15px -15px 10px -15px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+/* 멤버 리스트 */
+.table ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.table li {
+  padding: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+.table li:last-child {
+  border-bottom: none;
+}
