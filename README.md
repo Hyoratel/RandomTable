@@ -1,35 +1,145 @@
-# .
+# 🧮 Random Table Vue
+**Vue 3 기반 랜덤 테이블 배정 프로젝트**  
+실시간 랜덤 배정, 그룹 분산, 동적 UI 반영 기능을 중심으로  
+**Vue 숙련도 향상과 구현 능력 강화를 목적으로 기획한 개인 프로젝트입니다.**
 
-This template should help get you started developing with Vue 3 in Vite.
+---
 
-## Recommended IDE Setup
+## 🔖 프로젝트 개요
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **진행 목적**: Vue 3 컴포넌트 구조 이해 및 GitHub Pages / Netlify 배포 경험
+- **핵심 키워드**: 그룹 분산 배정, 테이블 균등 배치, Vue 컴포넌트 재사용, 로컬 상태관리
 
-## Customize configuration
+---
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## 🧩 핵심 기능
 
-## Project Setup
+| 기능 | 설명 |
+|------|------|
+| ✅ 그룹 기반 무작위 배정 | 여러 그룹의 인원을 최대한 분산하여 테이블에 배치 |
+| ✅ 테이블당 인원 제한 | 테이블당 인원 제한(maxPerTable)에 따라 자동 분할 |
+| ✅ UI 실시간 반영 | 배정 버튼 클릭 시 테이블 UI 즉시 갱신 |
+| ✅ 그룹 간 겹침 최소화 | 같은 그룹 내 인원이 최대한 겹치지 않도록 배정 |
+| ✅ 동적 테이블 수 생성 | 총 인원 수에 따라 테이블 개수 자동 증가 |
+| ✅ 컴포넌트 구조화 | 재사용 가능한 단위 컴포넌트 분리 설계 (`TableGroup`, `RandomPicker`) |
 
-```sh
-npm install
+---
+
+## 🧱 컴포넌트 구조 및 기능 설명
+
+### 🔹 `RandomPicker.vue` – 랜덤 배정 버튼 UI
+
+| 기능 | 설명 |
+|------|------|
+| 랜덤 배정 버튼 | 클릭 시 `assignToTables()` 함수 호출 후 테이블 구성 새로고침 |
+| 그룹 정보 입력 | 내부에 정적 그룹 정보(`ref([])`) 포함, 수정 시 즉시 반영 가능 |
+| 결과 전달 | `emit('setTables', ...)` 방식으로 상위 `App.vue`에 테이블 전달 |
+
+✅ **활용 팁**: 그룹 데이터만 동적으로 바꾸면 **교육, 워크숍, 게임 등 다양한 상황에 재사용 가능**합니다.
+
+---
+
+### 🔹 `TableGroup.vue` – 개별 테이블 카드 UI
+
+| 기능 | 설명 |
+|------|------|
+| 테이블 제목 출력 | `tableIndex` prop으로 N번 테이블 표시 |
+| 멤버 목록 출력 | `members` prop에 따라 동적으로 렌더링 |
+| 스타일 구성 | 부트스트랩 기반 카드 형태 + 커스터마이징 가능 |
+
+✅ **활용 팁**: `tableIndex`에 따라 색상 또는 스타일을 변경하여 **시각적 구분이 쉬운 UI로 확장 가능**
+
+---
+
+### 🔹 `App.vue` – 루트 컴포넌트 (상태 관리 및 UI 전체 통합)
+
+| 역할 | 설명 |
+|------|------|
+| 상태 관리 | `tables` 상태 정의 및 랜덤 배정 결과 수신 |
+| 컴포넌트 조합 | `RandomPicker`, `TableGroup`들을 렌더링 |
+| 테이블 UI 출력 | `v-for`로 `tables`를 반복 렌더링하여 전체 배치 구성 |
+
+---
+
+### 🔹 `randomUtils.js` – 핵심 배정 로직
+
+| 함수 | 설명 |
+|------|------|
+| `assignToTables(groups, maxPerTable)` | 그룹 기반으로 **최대한 분산된 테이블 배정** 수행 |
+| `shuffleArray(array)` | Fisher-Yates 알고리즘 기반 랜덤 섞기 |
+
+✅ **유연성 확보**: `maxPerTable`, `group 수`, `총 인원 수`에 따라 유동적으로 작동되며  
+📦 외부에서 이 함수를 호출만 하면 다양한 구조의 데이터를 다룰 수 있음.
+
+---
+
+## 💾 데이터 구조 예시
+
+```js
+const groups = ref([
+  ['A1', 'A2', 'A3'],
+  ['B1', 'B2', 'B3'],
+  ['C1', 'C2'],
+  // ...
+])
 ```
 
-### Compile and Hot-Reload for Development
+- `assignToTables(groups, maxPerTable)` 실행 시 자동으로 테이블 분배
+- 결과는 2차원 배열로 반환 → `[[table1Members], [table2Members], ...]`
 
-```sh
+---
+
+## 🌱 향후 개발 방향 (예정)
+
+- [ ] 📋 **테이블 결과 복사 및 공유하기 기능 추가**  
+  → 버튼 클릭 시 결과를 클립보드로 복사하거나 공유 링크 생성 가능하게 개선
+
+- [ ] 🧑‍💻 **사용자가 화면에 직접 입력한 인원으로 테이블 랜덤 편성 가능하도록 변경**  
+  → 기존 정적 배열 구조를 입력 폼으로 대체하여 유동적인 구성 지원
+
+- [ ] 💾 **로컬스토리지 또는 DB 저장 기능**  
+  → 사용자 입력 및 배정 결과를 저장하여 새로고침 후에도 유지되도록 개선 (옵션: Firebase/Express 연동)
+
+- [ ] 🗓️ **일정 기반 자동 테이블 배정 (예: 해당 일 1시간 전 자동 배정 및 공유 자동화)**  
+  → 특정 날짜 및 시간 설정 시 자동 배정 후 공유 메시지 생성까지 연결
+
+---
+
+## 🛠 사용 기술 스택
+
+- **Vue 3 + Composition API**
+- **Vite**
+- **Bootstrap 5**
+- **Netlify 배포**
+- (옵션) Prettier, ESLint
+
+---
+
+## 🚀 배포 주소
+
+👉 [https://randomtable.netlify.app](https://randomtable.netlify.app)
+
+---
+
+## 📂 설치 및 실행
+
+```bash
+git clone https://github.com/Hyoratel/RandomTable_vue.git
+cd RandomTable_vue
+npm install
 npm run dev
 ```
 
-### Compile and Minify for Production
+---
 
-```sh
-npm run build
-```
+## ✨ 커스터마이징 팁
 
-### Lint with [ESLint](https://eslint.org/)
+- `RandomPicker.vue`의 그룹 배열만 수정하면 👉 다양한 팀, 인원 구성에 즉시 적용 가능
+- `assignToTables()` 함수는 독립적이므로 **다른 프로젝트에서 재사용 가능**
 
-```sh
-npm run lint
-```
+---
+
+## 🧑‍💻 기여자
+
+- **개발**: [@Hyoratel](https://github.com/Hyoratel)
+- **기반 아이디어**: Vue.js 교재 실습 + 확장 개인 프로젝트
